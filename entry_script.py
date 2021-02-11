@@ -1,8 +1,6 @@
 import csv
 import sys
-
-
-
+from data import Data
 
 
 def write_output_file():
@@ -22,7 +20,6 @@ def write_output_file():
         writer.writerow(["UC1", "L1, L34, L5"])
         writer.writerow(["UC2", "L5, L4"])
 
-
 if __name__ == "__main__":
     '''
     Entry point for the script
@@ -39,17 +36,6 @@ if __name__ == "__main__":
         print("Match type provided is not a valid number")
         exit(1)
 
-    print(f"Hello world, running with matchtype {match_type}!")
-
-    # Read input low-level requirements and count them (ignore header line).
-    with open("/input/low.csv", "r") as inputfile:
-        print(f"There are {len(inputfile.readlines()) - 1} low-level requirements")
-
-
-    '''
-    This is where you should implement the trace level logic as discussed in the 
-    assignment on Canvas. Please ensure that you take care to deliver clean,
-    modular, and well-commented code.
-    '''
+    data = Data("/input/low.csv", "/input/high.csv")
 
     write_output_file()
