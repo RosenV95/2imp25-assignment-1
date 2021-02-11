@@ -3,23 +3,6 @@ import sys
 from data import Data
 
 
-def write_output_file():
-    '''
-    Writes a dummy output file using the python csv writer, update this
-    to accept as parameter the found trace links.
-    '''
-    with open('/output/links.csv', 'w') as csvfile:
-
-        writer = csv.writer(csvfile, delimiter=",", quotechar="\"", quoting=csv.QUOTE_MINIMAL)
-
-
-        fieldnames = ["id", "links"]
-
-        writer.writerow(fieldnames)
-
-        writer.writerow(["UC1", "L1, L34, L5"])
-        writer.writerow(["UC2", "L5, L4"])
-
 if __name__ == "__main__":
     '''
     Entry point for the script
@@ -36,6 +19,12 @@ if __name__ == "__main__":
         print("Match type provided is not a valid number")
         exit(1)
 
-    data = Data("/input/low.csv", "/input/high.csv")
+    type = int(sys.argv[1])
+    if type == 0:
+        treshold = 0
+    if type == 1:
+        treshold = 0.25
+    if type == 2:
+        treshold = 0.67
 
-    write_output_file()
+    data = Data("/input/low.csv", "/input/high.csv", treshold)
