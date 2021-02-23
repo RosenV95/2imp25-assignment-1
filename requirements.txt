@@ -2,3 +2,5 @@ certifi==2020.12.5
 pandas
 nltk
 numpy
+scipy==1.6.1
+textdistance==4.2.1

@@ -7,6 +7,8 @@ if __name__ == "__main__":
     '''
     Entry point for the script
     '''
+
+    own_implementation=False
     if len(sys.argv) < 2:
         print("Please provide an argument to indicate which matcher should be used")
         exit(1)
@@ -26,5 +28,10 @@ if __name__ == "__main__":
         treshold = 0.25
     if type == 2:
         treshold = 0.67
+    if type == 3:
+        own_implementation = True
+        treshold = 0.19
 
-    data = Data("/input/low.csv", "/input/high.csv", treshold)
+
+
+    data = Data("/input/low.csv", "/input/high.csv", treshold, own_implementation)

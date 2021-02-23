@@ -1,12 +1,19 @@
 import pandas as pd
 import nltk
 import math
+from math import *
 import numpy
 import csv
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 from typing import List
+from scipy.spatial import distance
+from decimal import Decimal
+import textdistance
+from scipy.stats import pearsonr, spearmanr
+
+
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -15,7 +22,8 @@ ps = PorterStemmer()
 
 
 class Data:
-    def __init__(self, low_path, high_path, treshold):
+    def __init__(self, low_path, high_path, treshold, own_implementation):
+
         low_df = self.read_data(low_path)
         high_df = self.read_data(high_path)
 
@@ -33,12 +41,18 @@ class Data:
         low_req_vocabulary = self.create_req_vocabulary(low_reqs)
         high_req_vocabulary = self.create_req_vocabulary(high_reqs)
 
+
         number_of_reqs = len(low_reqs) + len(high_reqs)
+
 
         low_req_vectors = self.create_vectors(vocabulary, low_reqs, low_req_vocabulary, number_of_reqs)
         high_req_vectors = self.create_vectors(vocabulary, high_reqs, high_req_vocabulary, number_of_reqs)
 
-        sim_matrix = self.create_matrix(low_req_vectors, high_req_vectors)
+
+        if own_implementation == True:
+            sim_matrix=self.create_pearson_matrix(low_req_vectors, high_req_vectors)
+        else:
+            sim_matrix = self.create_matrix(low_req_vectors, high_req_vectors)
 
         self.write_output(sim_matrix, treshold, low_req_ids, high_req_ids)
 
@@ -143,11 +157,36 @@ class Data:
             matrix.append(row)
         return matrix
 
+    def create_pearson_matrix(self, low_reqs, high_reqs):
+        matrix = []
+        for high_req in high_reqs:
+            row = []
+            for low_req in low_reqs:
+                similarity = self.pearson_similarity(high_req, low_req)
+                row.append(similarity)
+            matrix.append(row)
+        return matrix
+
+
+
+
+
+
 
     def cosine_similarity(self, v1, v2):
-
+        print(numpy.sum(numpy.multiply(v1, v2)) / \
+               (math.sqrt(numpy.sum(numpy.square(v1))) * math.sqrt(numpy.sum(numpy.square(v1))))
+)
         return numpy.sum(numpy.multiply(v1, v2)) / \
                (math.sqrt(numpy.sum(numpy.square(v1))) * math.sqrt(numpy.sum(numpy.square(v1))))
+
+
+
+    def pearson_similarity(self, v1,v2):
+        corr, _ = pearsonr(v1, v2)
+        print(corr)
+
+        return corr
 
     def write_output(self, matrix, treshold, low_ids, high_ids):
         with open('/output/links.csv', 'w+') as csvfile:
@@ -157,7 +196,6 @@ class Data:
                 links = ""
                 for idCol, col in enumerate(row):
                     if col > treshold:
-
                         links += ', ' + low_ids[idCol]
                 links = links[2:]
                 output = [high_id, links]
@@ -167,3 +205,5 @@ class Data:
     def read_data(self, path):
         df = pd.read_csv(path)
         return df
+
+
