@@ -41,9 +41,7 @@ class Data:
         low_req_vocabulary = self.create_req_vocabulary(low_reqs)
         high_req_vocabulary = self.create_req_vocabulary(high_reqs)
 
-
         number_of_reqs = len(low_reqs) + len(high_reqs)
-
 
         low_req_vectors = self.create_vectors(vocabulary, low_reqs, low_req_vocabulary, number_of_reqs)
         high_req_vectors = self.create_vectors(vocabulary, high_reqs, high_req_vocabulary, number_of_reqs)
@@ -174,9 +172,7 @@ class Data:
 
 
     def cosine_similarity(self, v1, v2):
-        print(numpy.sum(numpy.multiply(v1, v2)) / \
-               (math.sqrt(numpy.sum(numpy.square(v1))) * math.sqrt(numpy.sum(numpy.square(v1))))
-)
+
         return numpy.sum(numpy.multiply(v1, v2)) / \
                (math.sqrt(numpy.sum(numpy.square(v1))) * math.sqrt(numpy.sum(numpy.square(v1))))
 
@@ -191,12 +187,24 @@ class Data:
     def write_output(self, matrix, treshold, low_ids, high_ids):
         with open('/output/links.csv', 'w+') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_ALL)
+            fieldnames = ["id", "links"]
+            writer.writerow(fieldnames)
             for idRow, row in enumerate(matrix):
                 high_id = high_ids[idRow]
                 links = ""
-                for idCol, col in enumerate(row):
-                    if col > treshold:
-                        links += ', ' + low_ids[idCol]
+                if treshold == 0.67:
+                    highest = 0
+                    for col in row:
+                        if col > highest:
+                            highest = col
+                    for idCol, col in enumerate(row):
+                        if col > treshold * highest:
+                            links += ', ' + low_ids[idCol]
+                else:
+                    for idCol, col in enumerate(row):
+                        if col > treshold:
+
+                            links += ', ' + low_ids[idCol]
                 links = links[2:]
                 output = [high_id, links]
                 writer.writerow(output)
@@ -205,5 +213,3 @@ class Data:
     def read_data(self, path):
         df = pd.read_csv(path)
         return df
-
-
