@@ -180,8 +180,6 @@ class Data:
 
     def pearson_similarity(self, v1,v2):
         corr, _ = pearsonr(v1, v2)
-        print(corr)
-
         return corr
 
     def write_output(self, matrix, treshold, low_ids, high_ids):
@@ -192,20 +190,20 @@ class Data:
             for idRow, row in enumerate(matrix):
                 high_id = high_ids[idRow]
                 links = ""
-                if treshold == 0.67:
+                if treshold == 0.67 or treshold == 0.90:
                     highest = 0
                     for col in row:
                         if col > highest:
                             highest = col
                     for idCol, col in enumerate(row):
                         if col > treshold * highest:
-                            links += ', ' + low_ids[idCol]
+                            links += ',' + low_ids[idCol]
                 else:
                     for idCol, col in enumerate(row):
                         if col > treshold:
 
-                            links += ', ' + low_ids[idCol]
-                links = links[2:]
+                            links += ',' + low_ids[idCol]
+                links = links[1:]
                 output = [high_id, links]
                 writer.writerow(output)
 

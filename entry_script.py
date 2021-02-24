@@ -30,7 +30,7 @@ if __name__ == "__main__":
         treshold = 0.67
     if type == 3:
         own_implementation = True
-        treshold = 0.19
+        treshold = 0.90
 
 
 
